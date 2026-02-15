@@ -103,6 +103,5 @@ cors_origins = os.environ.get(
 )
 CORS_ALLOWED_ORIGINS = [x.strip() for x in cors_origins.split(",") if x.strip()]
 if set(CORS_ALLOWED_ORIGINS):
-    for o in _dev_origins_3001:
-        if o not in CORS_ALLOWED_ORIGINS:
-            CORS_ALLOWED_ORIGINS.append(o)
+    if o not in CORS_ALLOWED_ORIGINS:
+        CORS_ALLOWED_ORIGINS.append(o)
