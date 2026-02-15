@@ -14,7 +14,8 @@ services:
     plan: free
     rootDir: backend
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-    startCommand: "python manage.py migrate --noinput && python -m gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+    # Retry migrate until DB host resolves (Render internal DNS can lag at startup)
+    startCommand: "for i in 1 2 3 4 5 6 7 8 9 10; do python manage.py migrate --noinput && break; echo 'Waiting for database...'; sleep 5; done && exec python -m gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
