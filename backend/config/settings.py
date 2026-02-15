@@ -95,6 +95,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [],
+    "COERCE_DECIMAL_TO_STRING": True,
 }
 
 cors_origins = os.environ.get(

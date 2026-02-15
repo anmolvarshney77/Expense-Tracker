@@ -3,6 +3,9 @@ from .models import Expense
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
+    amount = serializers.DecimalField(
+        max_digits=12, decimal_places=2, coerce_to_string=True
+    )
     currency = serializers.ChoiceField(choices=Expense.CURRENCY_CHOICES)
 
     class Meta:
