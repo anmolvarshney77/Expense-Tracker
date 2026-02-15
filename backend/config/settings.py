@@ -102,6 +102,3 @@ cors_origins = os.environ.get(
     "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001",
 )
 CORS_ALLOWED_ORIGINS = [x.strip() for x in cors_origins.split(",") if x.strip()]
-if set(CORS_ALLOWED_ORIGINS):
-    if o not in CORS_ALLOWED_ORIGINS:
-        CORS_ALLOWED_ORIGINS.append(o)
