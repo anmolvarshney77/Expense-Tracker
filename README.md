@@ -118,12 +118,43 @@ Use the UI at http://localhost:3000; it talks to the backend at http://localhost
 
 ---
 
-## Deployment
+## Deployment (free tier)
 
-- **Backend:** Deploy the `backend/` Django app with a PostgreSQL database (e.g. **Render** Web Service + PostgreSQL, or **Railway**). Set env: `SECRET_KEY`, `DEBUG=False`, `ALLOWED_HOSTS` (your backend domain), `DATABASE_URL`, `CORS_ALLOWED_ORIGINS` (your frontend URL). Run migrations in the release phase or once after first deploy (`python manage.py migrate`).
-- **Frontend:** Deploy the `frontend/` Next.js app (e.g. **Vercel**). Set `NEXT_PUBLIC_API_BASE_URL` to your deployed backend URL (e.g. `https://your-app.onrender.com`). Ensure the backend CORS list includes this frontend origin.
+Use **Render** for the backend + PostgreSQL and **Vercel** for the Next.js frontend. Both have free tiers.
 
-After deployment, the **live link** is your frontend URL (e.g. `https://your-app.vercel.app`). Open it to use the full UI and CRUD.
+### 1. Backend + PostgreSQL (Render)
+
+1. Push this repo to **GitHub** (if not already).
+2. Go to [Render Dashboard](https://dashboard.render.com) → **New** → **Blueprint**.
+3. Connect your GitHub account and select this repository. Render will detect the `render.yaml` in the root.
+4. Click **Apply**. Render will create:
+   - A **PostgreSQL** database (`expense-tracker-db`, free tier).
+   - A **Web Service** (`expense-tracker-backend`) that runs Django with Gunicorn.
+5. After the first deploy, open the **expense-tracker-backend** service → **Environment**. Add:
+   - **`CORS_ALLOWED_ORIGINS`**: you will set this after deploying the frontend (e.g. `https://your-app.vercel.app`). No spaces; use a single value for one origin.
+6. Copy the backend URL (e.g. `https://expense-tracker-backend.onrender.com`). You’ll need it for the frontend.
+7. (Optional) Create a Django superuser for `/admin/`: in the backend service → **Shell**, run:
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+**Note:** On the free tier, the backend may spin down after ~15 minutes of inactivity; the first request after that can take 30–60 seconds.
+
+### 2. Frontend (Vercel)
+
+1. Go to [Vercel](https://vercel.com) and sign in with GitHub.
+2. **Add New** → **Project** → import this repository.
+3. Set **Root Directory** to `frontend`.
+4. Under **Environment Variables**, add:
+   - **`NEXT_PUBLIC_API_BASE_URL`**: your Render backend URL (e.g. `https://expense-tracker-backend.onrender.com`). No trailing slash.
+5. Deploy. Vercel will give you a URL (e.g. `https://expense-tracker-xyz.vercel.app`).
+
+### 3. Connect frontend and backend
+
+1. In **Render** → **expense-tracker-backend** → **Environment**, set **`CORS_ALLOWED_ORIGINS`** to your Vercel URL (e.g. `https://expense-tracker-xyz.vercel.app`). Save. Render will redeploy if needed.
+2. Open your Vercel app URL. The UI should load and talk to the backend; you can list/add/edit/delete expenses and use the dashboard and exchange rates.
+
+**Live app:** Use the frontend URL (e.g. `https://your-project.vercel.app`) as the main entry point.
 
 ---
 
