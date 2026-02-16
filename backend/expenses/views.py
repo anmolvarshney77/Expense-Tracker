@@ -1,3 +1,6 @@
+import sys
+import traceback
+
 from django.db.models import Sum, Count, Avg
 from django.db.models.functions import TruncMonth
 from django.utils.decorators import method_decorator
@@ -15,6 +18,13 @@ from .services import get_exchange_rate
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
+
+    def list(self, request, *args, **kwargs):
+        try:
+            return super().list(request, *args, **kwargs)
+        except Exception as e:
+            traceback.print_exc(file=sys.stderr)
+            raise
 
     @action(detail=False, methods=["get"], url_path="summary")
     def summary(self, request):
