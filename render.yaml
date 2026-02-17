@@ -1,6 +1,7 @@
-# Render Blueprint: backend (Django + Gunicorn) + PostgreSQL (free tier)
+# Render Blueprint: backend (Django + PostgreSQL) + frontend (Next.js) on free tier
 # Deploy: push to GitHub, connect repo at https://dashboard.render.com → New → Blueprint
-# Then set CORS_ALLOWED_ORIGINS in the web service to your frontend URL (e.g. https://your-app.vercel.app)
+# After deploy: set CORS_ALLOWED_ORIGINS on backend to your frontend URL (e.g. https://expense-tracker-frontend.onrender.com)
+#               set NEXT_PUBLIC_API_BASE_URL on frontend to your backend URL (e.g. https://expense-tracker-backend.onrender.com)
 
 databases:
   - name: expense-tracker-db
@@ -14,7 +15,6 @@ services:
     plan: free
     rootDir: backend
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-    # Retry migrate until DB host resolves (Render internal DNS can lag at startup)
     startCommand: "for i in 1 2 3 4 5 6 7 8 9 10; do python manage.py migrate --noinput && break; echo 'Waiting for database...'; sleep 5; done && exec python -m gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: DATABASE_URL
@@ -28,4 +28,17 @@ services:
       - key: ALLOWED_HOSTS
         value: ".onrender.com"
       - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: expense-tracker-frontend
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm run start"
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NEXT_PUBLIC_API_BASE_URL
         sync: false
