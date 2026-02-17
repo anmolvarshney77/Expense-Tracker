@@ -144,7 +144,7 @@ Use **Render** for the backend + PostgreSQL and **Vercel** for the Next.js front
 
 1. Go to [Vercel](https://vercel.com) and sign in with GitHub.
 2. **Add New** → **Project** → import this repository.
-3. Set **Root Directory** to `frontend`.
+3. Set **Root Directory** to `frontend` (click **Edit** next to it and choose the `frontend` folder). If you see "No Next.js version detected", the Root Directory is wrong—it must be `frontend` so Vercel uses `frontend/package.json` where `next` is listed.
 4. Under **Environment Variables**, add:
    - **`NEXT_PUBLIC_API_BASE_URL`**: your Render backend URL (e.g. `https://expense-tracker-backend.onrender.com`). No trailing slash.
 5. Deploy. Vercel will give you a URL (e.g. `https://expense-tracker-xyz.vercel.app`).
